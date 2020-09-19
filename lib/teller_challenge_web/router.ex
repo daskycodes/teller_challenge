@@ -1,5 +1,6 @@
 defmodule TellerChallengeWeb.Router do
   use TellerChallengeWeb, :router
+  alias TellerChallenge.Authentication.User
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -14,7 +15,21 @@ defmodule TellerChallengeWeb.Router do
     plug :accepts, ["json"]
   end
 
+  pipeline :auth do
+    plug :basic_auth
+  end
+
   scope "/", TellerChallengeWeb do
+    pipe_through :api
+    pipe_through :basic_auth
+
+    get "/accounts", AccountController, :index
+    get "/accounts/:account_id", AccountController, :show
+    get "/accounts/:account_id/transactions", TransactionController, :index
+    get "/accounts/:account_id/transactions/:transaction_id", TransactionController, :show
+  end
+
+  scope "/live", TellerChallengeWeb do
     pipe_through :browser
 
     live "/", PageLive, :index
@@ -38,6 +53,19 @@ defmodule TellerChallengeWeb.Router do
     scope "/" do
       pipe_through :browser
       live_dashboard "/dashboard", metrics: TellerChallengeWeb.Telemetry
+    end
+  end
+
+  defp basic_auth(conn, _opts) do
+    with {api_token, pass} <- Plug.BasicAuth.parse_basic_auth(conn),
+         %User{} = user <- TellerChallenge.Authentication.find_by_api_token(api_token, pass) do
+      assign(conn, :current_user, user)
+    else
+      {:error, message} ->
+        conn |> put_status(:unauthorized) |> json(%{error: message}) |> halt()
+
+      _ ->
+        conn |> put_status(:unauthorized) |> json(%{error: "Unauthorized"}) |> halt()
     end
   end
 end
