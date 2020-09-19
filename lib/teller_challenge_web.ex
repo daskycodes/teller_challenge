@@ -24,6 +24,7 @@ defmodule TellerChallengeWeb do
       import Plug.Conn
       import TellerChallengeWeb.Gettext
       alias TellerChallengeWeb.Router.Helpers, as: Routes
+      import TellerChallengeWeb.Helpers
     end
   end
 
@@ -39,6 +40,9 @@ defmodule TellerChallengeWeb do
 
       # Include shared imports and aliases for views
       unquote(view_helpers())
+
+      # Import global helpers
+      import TellerChallengeWeb.Helpers
     end
   end
 
