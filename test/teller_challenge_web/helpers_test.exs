@@ -24,7 +24,7 @@ defmodule TellerChallengeWeb.HelpersTest do
       list = paginate(@list, @count, @id)
 
       assert Enum.count(list) == 5
-      assert List.first(list) == %{id: "5"}
+      assert List.first(list) == %{id: "4"}
     end
 
     test "paginate/3 returns full list when count is 0 and id is an empty string" do

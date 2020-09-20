@@ -5,10 +5,13 @@ defmodule TellerChallengeWeb.Helpers do
     |> Decimal.round(2)
   end
 
-  def paginate(list, count, id) when count > 0 and id == "",
+  def paginate(list, count, id) when (count > 0 and id == "") or (count > 0 and is_nil(id)),
     do: Enum.take(list, count)
 
   def paginate(list, count, id) when count > 0 do
+    index = Enum.find_index(list, &(&1.id == id))
+    id = Enum.fetch!(list, index - 1).id
+
     list
     |> Enum.drop_while(&(&1.id != id))
     |> Enum.take(count)
