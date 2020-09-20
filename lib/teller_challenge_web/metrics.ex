@@ -15,7 +15,7 @@ defmodule TellerChallengeWeb.Metrics do
     timestamp = :os.system_time(:seconds)
     api_request = %{timestamp: timestamp, path: path}
     # keep last 5 seconds of requests in state
-    state = Enum.take_while(state, &(&1.timestamp != timestamp - 6))
+    state = Enum.take_while(state, &(&1.timestamp != timestamp - 5))
     {:noreply, [api_request | state]}
   end
 

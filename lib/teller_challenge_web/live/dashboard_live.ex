@@ -35,7 +35,7 @@ defmodule TellerChallengeWeb.DashboardLive do
   defp requests_for_last_seconds(seconds) do
     timestamp = :os.system_time(:seconds)
 
-    for seconds <- 0..seconds do
+    for seconds <- 1..seconds do
       requests = Enum.filter(metrics(), &(&1.timestamp == timestamp - seconds))
       [timestamp - seconds, Enum.count(requests)]
     end
