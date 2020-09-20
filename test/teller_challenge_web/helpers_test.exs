@@ -20,11 +20,11 @@ defmodule TellerChallengeWeb.HelpersTest do
       assert Enum.count(paginate(@list, @count, "")) == 5
     end
 
-    test "paginate/3 returns count items starting from id" do
+    test "paginate/3 returns count items starting 1 earlier before the given id" do
       list = paginate(@list, @count, @id)
 
       assert Enum.count(list) == 5
-      assert List.first(list) == %{id: "4"}
+      assert List.first(list) == %{id: "6"}
     end
 
     test "paginate/3 returns full list when count is 0 and id is an empty string" do

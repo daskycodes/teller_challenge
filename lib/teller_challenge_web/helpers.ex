@@ -9,11 +9,9 @@ defmodule TellerChallengeWeb.Helpers do
     do: Enum.take(list, count)
 
   def paginate(list, count, id) when count > 0 do
-    index = Enum.find_index(list, &(&1.id == id))
-    id = Enum.fetch!(list, index - 1).id
-
     list
     |> Enum.drop_while(&(&1.id != id))
+    |> Enum.drop(1)
     |> Enum.take(count)
   end
 
