@@ -1,7 +1,7 @@
 // We need to import the CSS so that webpack will load it.
 // The MiniCssExtractPlugin is used to separate it out into
 // its own CSS file.
-import "../css/app.scss"
+import "../css/app.css"
 
 // webpack automatically bundles all modules in your
 // entry points. Those entry points can be configured
@@ -13,12 +13,60 @@ import "../css/app.scss"
 //     import socket from "./socket"
 //
 import "phoenix_html"
-import {Socket} from "phoenix"
+import { Socket } from "phoenix"
 import NProgress from "nprogress"
-import {LiveSocket} from "phoenix_live_view"
+import { LiveSocket } from "phoenix_live_view"
+
+let Hooks = {}
+Hooks.Chart = {
+  timestamps() {
+    return JSON.parse(this.el.dataset.requests).map(function(requests) {
+      return new Date(requests[0] * 1000).toLocaleTimeString("en-US")
+    })
+  },
+  request_counts() {
+    return JSON.parse(this.el.dataset.requests).map(function(requests) {
+      return requests[1].toFixed(0)
+    })
+  },
+  createChart(data, ctx, time) {
+    return new Chart(ctx, {
+      type: "line",
+      data: {
+        labels: time,
+        datasets: [
+          {
+            label: "API Requests",
+            backgroundColor: "rgba(154, 230, 180, 0.5)",
+            borderColor: "rgb(154, 230, 180)",
+            data: data
+          }
+        ]
+      },
+      options: {}
+    })
+  },
+  addPointToChart(chart, times, data) {
+    chart.data.labels = times
+    chart.data.datasets.forEach(dataset => {
+      dataset.data = data
+    })
+    chart.update()
+  },
+  mounted() {
+    console.log("Chart LiveView mounted")
+    Chart.defaults.global.defaultFontColor = "#fff"
+
+    var ctx = document.getElementById("canvas").getContext("2d")
+    this.chart = this.createChart(this.request_counts(), ctx, this.timestamps())
+  },
+  updated() {
+    this.addPointToChart(this.chart, this.timestamps(), this.request_counts())
+  }
+}
 
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
-let liveSocket = new LiveSocket("/live", Socket, {params: {_csrf_token: csrfToken}})
+let liveSocket = new LiveSocket("/live", Socket, { hooks: Hooks, params: { _csrf_token: csrfToken } })
 
 // Show progress bar on live navigation and form submits
 window.addEventListener("phx:page-loading-start", info => NProgress.start())
@@ -32,4 +80,3 @@ liveSocket.connect()
 // >> liveSocket.enableLatencySim(1000)  // enabled for duration of browser session
 // >> liveSocket.disableLatencySim()
 window.liveSocket = liveSocket
-

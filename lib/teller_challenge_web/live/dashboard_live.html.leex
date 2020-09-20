@@ -1,0 +1,26 @@
+<section class="container bg-white rounded shadow mt-2 p-2">
+  <section class="flex flex-wrap">
+    <div class="bg-gray-700 rounded m-1 flex-grow">
+      <p class="p-3 text-xs text-white">Sandbox Token: <%= @api_token %></p>
+    </div>
+    <div class="bg-gray-700 rounded m-1 flex-grow">
+      <p class="p-3 text-xs text-white">Sandbox Accounts Entrypoint: <%= @entrypoint %></p>
+    </div>
+  </section>
+
+  <section>
+    <div class="bg-gray-700 rounded m-1">
+      <p class="p-3 pb-0 text-xs text-white">Example Request:</p>
+      <p class="p-3 text-xs text-white"><span class="text-green-300">http</span> <%= @entrypoint %> <span class="text-green-300">--auth</span> <%= @api_token %>: </p>
+      <p class="p-3 pb-0 text-xs text-white">You can paginate transactions:</p>
+      <p class="p-3 text-xs text-white"><span class="text-green-300">http</span> <%= @pagination %> <span class="text-green-300">--auth</span> <%= @api_token %>: </p>
+    </div>
+  </section>
+</section>
+
+<section class="container bg-white rounded shadow mt-2 p-2">
+  <div phx-hook="Chart" data-requests="<%= @requests %>" ></div>
+  <div class="bg-gray-700 rounded m-1 p-4" phx-update="ignore" id="chart">
+    <canvas id="canvas" style="width:100%; height:400px;" ></div>
+  </div>
+</section>

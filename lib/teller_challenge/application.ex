@@ -7,14 +7,10 @@ defmodule TellerChallenge.Application do
 
   def start(_type, _args) do
     children = [
-      # Start the Telemetry supervisor
       TellerChallengeWeb.Telemetry,
-      # Start the PubSub system
       {Phoenix.PubSub, name: TellerChallenge.PubSub},
-      # Start the Endpoint (http/https)
+      TellerChallengeWeb.Metrics,
       TellerChallengeWeb.Endpoint
-      # Start a worker by calling: TellerChallenge.Worker.start_link(arg)
-      # {TellerChallenge.Worker, arg}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

@@ -13,26 +13,27 @@ defmodule TellerChallengeWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug :bump_metric
   end
 
   pipeline :auth do
     plug :basic_auth
   end
 
-  scope "/", TellerChallengeWeb do
+  scope "/accounts", TellerChallengeWeb do
     pipe_through :api
     pipe_through :basic_auth
 
-    get "/accounts", AccountController, :index
-    get "/accounts/:account_id", AccountController, :show
-    get "/accounts/:account_id/transactions", TransactionController, :index
-    get "/accounts/:account_id/transactions/:transaction_id", TransactionController, :show
+    get "/", AccountController, :index
+    get "/:account_id", AccountController, :show
+    get "/:account_id/transactions", TransactionController, :index
+    get "/:account_id/transactions/:transaction_id", TransactionController, :show
   end
 
-  scope "/live", TellerChallengeWeb do
+  scope "/", TellerChallengeWeb do
     pipe_through :browser
 
-    live "/", PageLive, :index
+    live "/", DashboardLive, :index
   end
 
   # Other scopes may use custom stacks.
@@ -67,5 +68,16 @@ defmodule TellerChallengeWeb.Router do
       _ ->
         conn |> put_status(:unauthorized) |> json(%{error: "Unauthorized"}) |> halt()
     end
+  end
+
+  defp bump_metric(conn, _opts) do
+    register_before_send(conn, fn conn ->
+      if conn.status == 200 do
+        path = "/" <> Enum.join(conn.path_info, "/")
+        TellerChallengeWeb.Metrics.bump(path)
+      end
+
+      conn
+    end)
   end
 end
