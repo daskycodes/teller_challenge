@@ -28,6 +28,8 @@ defmodule TellerChallengeWeb.Router do
     get "/:account_id", AccountController, :show
     get "/:account_id/transactions", TransactionController, :index
     get "/:account_id/transactions/:transaction_id", TransactionController, :show
+
+    post "/:account_id/transfers", TransferController, :create
   end
 
   scope "/", TellerChallengeWeb do

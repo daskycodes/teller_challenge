@@ -25,6 +25,9 @@ defmodule TellerChallenge.Banking.Generator do
     {seed, _rest} = account_id |> Base.url_encode64() |> Integer.parse(36)
     :random.seed(seed)
 
+    # case check if transfers exists
+    # merge transfers with account
+
     %Account{
       balances: generate_balances(),
       id: account_id,
@@ -42,6 +45,9 @@ defmodule TellerChallenge.Banking.Generator do
   def transactions(account_id, max_days) do
     timestamp = timestamp_from_account_id(account_id)
     {seed, _rest} = account_id |> Base.url_encode64() |> Integer.parse(36)
+
+    # case check if transfers exists
+    # merge transfers with transactions
 
     :random.seed(seed)
 

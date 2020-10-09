@@ -13,6 +13,8 @@ defmodule TellerChallengeWeb.MetricsTest do
     {:noreply, state} = Metrics.handle_cast({:push, "/accounts"}, context.requests)
 
     assert Enum.count(state) == 6
-    assert state == for offset <- 0..5, do: %{path: "/accounts", timestamp: context.timestamp - offset}
+
+    assert state ==
+             for(offset <- 0..5, do: %{path: "/accounts", timestamp: context.timestamp - offset})
   end
 end

@@ -33,4 +33,8 @@ defmodule TellerChallenge.Helpers do
     |> String.slice(4..9)
     |> String.to_integer(36)
   end
+
+  def random_id() do
+    :crypto.strong_rand_bytes(16) |> Base.encode32(case: :lower, padding: false)
+  end
 end
